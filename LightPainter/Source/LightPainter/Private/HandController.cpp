@@ -3,7 +3,7 @@
 #include "HandController.h"
 #include "MotionControllerComponent.h"
 #include "Stroke.h"
-
+#include "Engine/World.h"
 AHandController::AHandController()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -26,17 +26,20 @@ void AHandController::BeginPlay()
 void AHandController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (CurrentStroke) 
+	{
+		CurrentStroke->Update(GetActorLocation());
+	}
 }
 
 void AHandController::TriggerPressed()
 {
-	AStroke* Stroke = GetWorld()->SpawnActor<AStroke>(StrokeClass);
-	Stroke->SetActorLocation(GetActorLocation());
+	CurrentStroke= GetWorld()->SpawnActor<AStroke>(StrokeClass);
+	CurrentStroke->SetActorLocation(GetActorLocation());
 }
 
 void AHandController::Triggerreleased()
 {
-
+	CurrentStroke = nullptr;
 }
 

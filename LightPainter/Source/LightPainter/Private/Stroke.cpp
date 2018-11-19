@@ -1,27 +1,39 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Stroke.h"
+#include "Components/SplineMeshComponent.h"
 
-
-// Sets default values
 AStroke::AStroke()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Root = CreateDefaultSubobject<USceneComponent>("Root");
+	SetRootComponent(Root);
 }
 
-// Called when the game starts or when spawned
-void AStroke::BeginPlay()
+void AStroke::Update(FVector CurrentCursorLocation)
 {
-	Super::BeginPlay();
-	
+	//create SplineMesh
+	USplineMeshComponent* SplineMesh = CreateSpline();
+	FVector StartPostion=GetActorTransform().InverseTransformPosition(CurrentCursorLocation);
+
+	FVector EndPostion= GetActorTransform().InverseTransformPosition(PreviousCursorLocation);
+
+	if (SplineMesh)
+	{
+		SplineMesh->SetStartAndEnd(StartPostion, FVector::ZeroVector, EndPostion, FVector::ZeroVector);
+	}
+	//update endpoints
+	  PreviousCursorLocation= CurrentCursorLocation;
 }
 
-// Called every frame
-void AStroke::Tick(float DeltaTime)
+ USplineMeshComponent* AStroke::CreateSpline()
 {
-	Super::Tick(DeltaTime);
-
+	USplineMeshComponent* CurrentSplineMesh = NewObject<USplineMeshComponent>(this);
+	CurrentSplineMesh->SetMobility(EComponentMobility::Movable);
+	CurrentSplineMesh->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	CurrentSplineMesh->SetStaticMesh(SplineMesh);
+	CurrentSplineMesh->SetMaterial(0, SplineMaterial);
+	CurrentSplineMesh->RegisterComponent();
+	return CurrentSplineMesh;
 }
 
