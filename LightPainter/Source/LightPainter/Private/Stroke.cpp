@@ -2,38 +2,72 @@
 
 #include "Stroke.h"
 #include "Components/SplineMeshComponent.h"
+#include "Components/InstancedStaticMeshComponent.h"
 
 AStroke::AStroke()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	Root = CreateDefaultSubobject<USceneComponent>("Root");
 	SetRootComponent(Root);
+
+	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>("Stroke Meshes");
+	StrokeMeshes->SetupAttachment(Root);
+
+	JointeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>("Joint Meshes");
+	JointeMeshes->SetupAttachment(Root);
 }
 
 void AStroke::Update(FVector CurrentCursorLocation)
 {
-	//create SplineMesh
-	USplineMeshComponent* SplineMesh = CreateSpline();
-	FVector StartPostion=GetActorTransform().InverseTransformPosition(CurrentCursorLocation);
 
-	FVector EndPostion= GetActorTransform().InverseTransformPosition(PreviousCursorLocation);
-
-	if (SplineMesh)
+	if (PreviousCursorLocation.IsNearlyZero()) 
 	{
-		SplineMesh->SetStartAndEnd(StartPostion, FVector::ZeroVector, EndPostion, FVector::ZeroVector);
+		PreviousCursorLocation = CurrentCursorLocation;
+		JointeMeshes->AddInstance(GetNextJointTransform(CurrentCursorLocation));
+		return;
 	}
+	
+	//create instance static mesh in the location need transform for creating new instance
+	StrokeMeshes->AddInstance(GetNextSegmentTransform(CurrentCursorLocation));
+
+	JointeMeshes->AddInstance(GetNextJointTransform(CurrentCursorLocation));
 	//update endpoints
-	  PreviousCursorLocation= CurrentCursorLocation;
+	 PreviousCursorLocation= CurrentCursorLocation;
 }
 
- USplineMeshComponent* AStroke::CreateSpline()
+FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation) const
 {
-	USplineMeshComponent* CurrentSplineMesh = NewObject<USplineMeshComponent>(this);
-	CurrentSplineMesh->SetMobility(EComponentMobility::Movable);
-	CurrentSplineMesh->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	CurrentSplineMesh->SetStaticMesh(SplineMesh);
-	CurrentSplineMesh->SetMaterial(0, SplineMaterial);
-	CurrentSplineMesh->RegisterComponent();
-	return CurrentSplineMesh;
+	FTransform SegmentTransform;
+	SegmentTransform.SetScale3D(GetNextSegmentScale(CurrentLocation));
+	SegmentTransform.SetRotation(GetNextSegmentRotation(CurrentLocation));
+	SegmentTransform.SetLocation(GetNextSegmentLocation(CurrentLocation));
+
+	return SegmentTransform;
 }
 
+FVector AStroke::GetNextSegmentScale(FVector CurrentLocation) const
+{
+	
+	FVector Segment = CurrentLocation - PreviousCursorLocation;
+	return FVector(Segment.Size(), 1, 1);
+}
+
+FQuat AStroke::GetNextSegmentRotation(FVector CurrentLocation) const
+{
+
+	FVector Segment = CurrentLocation - PreviousCursorLocation;
+	FVector SegmentNormal = Segment.GetSafeNormal();
+	return FQuat::FindBetweenNormals(FVector::ForwardVector, SegmentNormal);
+}
+
+FVector AStroke::GetNextSegmentLocation(FVector CurrentLocation) const
+{
+	return GetTransform().InverseTransformPosition(PreviousCursorLocation);
+}
+
+FTransform AStroke::GetNextJointTransform(FVector CurrentLocation)
+{
+	FTransform JointTransform;
+	JointTransform.InverseTransformPosition(CurrentLocation);
+	return JointTransform;
+}

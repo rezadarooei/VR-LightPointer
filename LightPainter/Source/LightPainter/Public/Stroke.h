@@ -17,18 +17,28 @@ public:
 	void Update(FVector CurrentCursorLocation);
 
 private:
+
+	//functions
+	FTransform GetNextSegmentTransform(FVector CurrentLocation) const;
+	
+	FVector GetNextSegmentScale(FVector CurrentLocation) const;
+
+	FQuat GetNextSegmentRotation(FVector CurrentLocation) const;
+
+	FVector GetNextSegmentLocation(FVector CurrentLocation) const;
+
+	FTransform GetNextJointTransform(FVector CurrentLocation);
+	//config
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
+	USceneComponent* Root; 
 
-	class USplineMeshComponent* CreateSpline();
+	UPROPERTY(VisibleAnywhere)
+	class UInstancedStaticMeshComponent* StrokeMeshes;
 
+	UPROPERTY(VisibleAnywhere)
+	class UInstancedStaticMeshComponent* JointeMeshes;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMesh* SplineMesh;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UMaterialInterface* SplineMaterial;
-
+	//state
 	FVector PreviousCursorLocation;
 
 };

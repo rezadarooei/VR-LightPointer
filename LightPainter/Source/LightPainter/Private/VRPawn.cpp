@@ -34,7 +34,7 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), IE_Pressed,this, &AVRPawn::RightTriggerPressed);
-	PlayerInputComponent->BindAction(TEXT("RightTrigger"), IE_Released,this, &AVRPawn::RightTriggerPressed);
+	PlayerInputComponent->BindAction(TEXT("RightTrigger"), IE_Released,this, &AVRPawn::ReleaseTriggerReleased);
 
 }
 
