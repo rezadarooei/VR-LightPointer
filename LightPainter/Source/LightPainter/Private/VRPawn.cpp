@@ -3,6 +3,7 @@
 #include "VRPawn.h"
 #include "HandController.h"
 #include "Engine/World.h"
+#include "Saving/PainterSaveGame.h"
 #include "Camera/CameraComponent.h"
 // Sets default values
 AVRPawn::AVRPawn()
@@ -28,6 +29,8 @@ void AVRPawn::BeginPlay()
 		RightHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		
 	}
+	UPainterSaveGame* SaveGame = UPainterSaveGame::Create();
+	SaveGame->Save();
 }
 
 void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
