@@ -29,8 +29,7 @@ void AVRPawn::BeginPlay()
 		RightHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		
 	}
-	UPainterSaveGame* SaveGame = UPainterSaveGame::Create();
-	SaveGame->Save();
+	
 }
 
 void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -38,6 +37,31 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), IE_Pressed,this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), IE_Released,this, &AVRPawn::ReleaseTriggerReleased);
+	PlayerInputComponent->BindAction(TEXT("Save"), IE_Released, this, &AVRPawn::Save);
+	PlayerInputComponent->BindAction(TEXT("Load"), IE_Released, this, &AVRPawn::Load);
 
+}
+
+void AVRPawn::Save()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	Painting->SetState("Hello World");
+	Painting->SerilizeFromWorld(GetWorld());
+	Painting->Save();
+	UE_LOG(LogTemp,Warning,TEXT("Saved"))
+}
+
+void AVRPawn::Load()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	if (Painting) 
+	{
+		Painting->DeSerilizeToWorld(GetWorld());
+		UE_LOG(LogTemp, Warning, TEXT("Painitng State : %s"), *Painting->GetState())
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Found"))
+	}
 }
 

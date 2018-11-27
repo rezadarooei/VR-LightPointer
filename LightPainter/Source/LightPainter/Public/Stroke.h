@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Saving/PainterSaveGame.h"
 #include "Stroke.generated.h"
 
 UCLASS()
@@ -15,6 +16,11 @@ public:
 	AStroke();
 
 	void Update(FVector CurrentCursorLocation);
+
+	FStrokeState SerilizeToStruct() const;
+
+	static AStroke* SpawnAndDeserelizeFromStruct(UWorld* World,const FStrokeState& StrokeState);
+
 
 private:
 
@@ -41,4 +47,5 @@ private:
 	//state
 	FVector PreviousCursorLocation;
 
+	TArray<FVector> ControlPoints;
 };

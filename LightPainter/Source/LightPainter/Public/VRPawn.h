@@ -36,4 +36,8 @@ private:
 	 //functions
 	 void RightTriggerPressed() { if (RightHandController) { RightHandController->TriggerPressed(); } };
 	 void ReleaseTriggerReleased() { if (RightHandController) { RightHandController->Triggerreleased(); } };
+	 //it is for save game
+	 void Save();
+	 //it is for load game
+	 void Load();
 };
