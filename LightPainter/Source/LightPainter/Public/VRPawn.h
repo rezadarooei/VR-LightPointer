@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "HandController.h"
+#include "HandControllerBase.h"
 #include "VRPawn.generated.h"
 
 UCLASS()
@@ -24,18 +24,18 @@ protected:
 private:
 	//config
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AHandController> HandControllerClass;
+	TSubclassOf<AHandControllerBase> PaintBrushHandControllerClass;
 	// Components
 	class UCameraComponent* Camera;
 
 	class USceneComponent* VRRoot;
 	//References
 
-	 AHandController* RightHandController;
+	 AHandControllerBase* RightPaintBrushHandController;
 
 	 //functions
-	 void RightTriggerPressed() { if (RightHandController) { RightHandController->TriggerPressed(); } };
-	 void ReleaseTriggerReleased() { if (RightHandController) { RightHandController->Triggerreleased(); } };
+	 void RightTriggerPressed() { if (RightPaintBrushHandController) { RightPaintBrushHandController->TriggerPressed(); } };
+	 void ReleaseTriggerReleased() { if (RightPaintBrushHandController) { RightPaintBrushHandController->Triggerreleased(); } };
 	 //it is for save game
 	 void Save();
 	 //it is for load game

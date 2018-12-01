@@ -17,26 +17,33 @@ AStroke::AStroke()
 	JointeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>("Joint Meshes");
 	JointeMeshes->SetupAttachment(Root);
 }
+//it returns FStrokestate which has subclass and array which we want to spawn in the world
 FStrokeState AStroke::SerilizeToStruct() const {
 
 	FStrokeState StrokeState;
+	//get stroke class and put it in struct data type
 	StrokeState.Class = GetClass();
+	//get new position points from update
 	StrokeState.ControlPoints = ControlPoints;
 	return StrokeState;
 }
 
-AStroke* AStroke::SpawnAndDeserelizeFromStruct(UWorld* World, const FStrokeState& StrokeState)
-{
-	AStroke* Stroke = World->SpawnActor<AStroke>(StrokeState.Class);
-	for (FVector ControlPoint : StrokeState.ControlPoints)
-	{
-		Stroke->Update(ControlPoint);
-	}
-	return Stroke;
-}
+
+ AStroke* AStroke::SpawnAndDeserelizeFromStruct(UWorld* World, const FStrokeState& StrokeState)
+ {
+	 //create saved actor to world
+ 	AStroke* Stroke = World->SpawnActor<AStroke>(StrokeState.Class);
+	//
+ 	for (FVector ControlPoint : StrokeState.ControlPoints)
+ 	{
+ 		Stroke->Update(ControlPoint);
+ 	}
+ 	return Stroke;
+ }
 
 void AStroke::Update(FVector CurrentCursorLocation)
 {
+	//add points to courser location 
 	ControlPoints.Add(CurrentCursorLocation);
 	if (PreviousCursorLocation.IsNearlyZero()) 
 	{

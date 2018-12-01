@@ -27,12 +27,14 @@ UPainterSaveGame* UPainterSaveGame::Load()
 void UPainterSaveGame::SerilizeFromWorld( UWorld* World)
 {
 	//clear array
-
+		//strokes is array of FStrokeStates 
 	Strokes.Empty();
 	//iterates over all strokes
-
+	//it is searching whole stroke classes in the world
 	for (TActorIterator<AStroke> StrokeItr(World);StrokeItr;++StrokeItr)
 	{
+		//all strokes will be serialize and it contains class t subclass and its place
+		//add new strokes and its places to our array
 		Strokes.Add(StrokeItr->SerilizeToStruct());
 		//TODO serialize
 

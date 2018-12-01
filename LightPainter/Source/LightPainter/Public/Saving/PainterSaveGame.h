@@ -7,15 +7,16 @@
 #include "PainterSaveGame.generated.h"
 
 USTRUCT()
+//it contains class and points of array which we want spawn in the world
 struct FStrokeState
 {
 	GENERATED_BODY()
 
-		UPROPERTY()
-		TSubclassOf<class AStroke> Class;
+	UPROPERTY()
+	TSubclassOf<class AStroke> Class;
 
 	UPROPERTY()
-		TArray<FVector> ControlPoints;
+	TArray<FVector> ControlPoints;
 };
 
 UCLASS()

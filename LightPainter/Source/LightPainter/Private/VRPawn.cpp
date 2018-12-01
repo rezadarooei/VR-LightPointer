@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VRPawn.h"
-#include "HandController.h"
+#include "PaintBrushHandController.h"
 #include "Engine/World.h"
 #include "Saving/PainterSaveGame.h"
 #include "Camera/CameraComponent.h"
@@ -22,11 +22,12 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (HandControllerClass)
+	//if we choose hand controller in BP
+	if (PaintBrushHandControllerClass)
 	{
-		RightHandController = GetWorld()->SpawnActor<AHandController>(HandControllerClass);
-		RightHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+		//RightPaintBrushHandController=APaintBrushHandController 
+		RightPaintBrushHandController = GetWorld()->SpawnActor<AHandControllerBase>(PaintBrushHandControllerClass);
+		RightPaintBrushHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		
 	}
 	
@@ -41,21 +42,29 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Load"), IE_Released, this, &AVRPawn::Load);
 
 }
-
+//push button and save
 void AVRPawn::Save()
 {
+	//our save game class it has our save game property
+		//define new variable or create new savegame class and cast it with our savegame
 	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	//it get string as input it is our state
 	Painting->SetState("Hello World");
+	//it is serializing game data for save it means we compact our data
 	Painting->SerilizeFromWorld(GetWorld());
+	//after compact data we need to save
 	Painting->Save();
 	UE_LOG(LogTemp,Warning,TEXT("Saved"))
 }
 
 void AVRPawn::Load()
 {
+	//load saved game with test name
 	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	// if we saved before
 	if (Painting) 
 	{
+		//decompacting the data from world 
 		Painting->DeSerilizeToWorld(GetWorld());
 		UE_LOG(LogTemp, Warning, TEXT("Painitng State : %s"), *Painting->GetState())
 	}
