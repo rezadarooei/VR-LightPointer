@@ -22,6 +22,14 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	// our save game class it has our save game property
+		//define new variable or create new savegame class and cast it with our savegame
+		UPainterSaveGame* Painting = UPainterSaveGame::Create();
+		//if painting and we can paint
+		if (Painting && Painting->Save())
+		{
+			CurrentSlotName = Painting->GetSlotName();
+		}
 	//if we choose hand controller in BP
 	if (PaintBrushHandControllerClass)
 	{
@@ -45,22 +53,23 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
 //push button and save
 void AVRPawn::Save()
 {
-	//our save game class it has our save game property
-		//define new variable or create new savegame class and cast it with our savegame
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	//it get string as input it is our state
-	Painting->SetState("Hello World");
-	//it is serializing game data for save it means we compact our data
-	Painting->SerilizeFromWorld(GetWorld());
-	//after compact data we need to save
-	Painting->Save();
-	UE_LOG(LogTemp,Warning,TEXT("Saved"))
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (Painting)
+	{
+		//it get string as input it is our state
+		Painting->SetState("Hello World");
+		//it is serializing game data for save it means we compact our data
+		Painting->SerilizeFromWorld(GetWorld());
+		//after compact data we need to save
+		Painting->Save();
+		UE_LOG(LogTemp, Warning, TEXT("Saved"))
+	}
 }
 
 void AVRPawn::Load()
 {
 	//load saved game with test name
-	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
 	// if we saved before
 	if (Painting) 
 	{

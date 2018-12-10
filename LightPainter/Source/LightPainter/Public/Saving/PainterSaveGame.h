@@ -28,7 +28,7 @@ public:
 
 	bool Save();
 	
-	static UPainterSaveGame* Load();
+	static UPainterSaveGame* Load(FString SlotName);
 	
 	void SetState(FString NewState) { State = NewState; }
 
@@ -40,11 +40,15 @@ public:
 
 	void ClearWorld(UWorld* World);
 
+	FString GetSlotName() const { return SlotName; }
 private: 
 	//state
 
 	UPROPERTY()
 	FString State;
+
+	UPROPERTY()
+	FString SlotName;
 
 	UPROPERTY()
 	TArray<FStrokeState> Strokes;

@@ -32,6 +32,8 @@ private:
 	//References
 
 	 AHandControllerBase* RightPaintBrushHandController;
+	 //States
+	 FString CurrentSlotName;
 
 	 //functions
 	 void RightTriggerPressed() { if (RightPaintBrushHandController) { RightPaintBrushHandController->TriggerPressed(); } };

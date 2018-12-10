@@ -14,11 +14,20 @@ class UPaintingGrid : public UUserWidget
 {
 	GENERATED_BODY()
 
-		UFUNCTION(BlueprintCallable)
-		void AddPainting();
 	
 protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta =(BindWidget))
 	class UUniformGridPanel* PaintingGrid;
+
+
+public:
+	UFUNCTION(BlueprintCallable)
+		void AddPainting();
+	
+
+private: 
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UUserWidget> GridCardClass;
+
 };

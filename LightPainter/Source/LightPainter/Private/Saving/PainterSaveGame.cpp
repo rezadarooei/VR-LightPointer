@@ -4,23 +4,38 @@
 #include "Kismet/GameplayStatics.h"
 #include "Stroke.h"
 #include "EngineUtils.h"
-
+#include "Misc/Guid.h"
+#include "Saving/PainterSaveGameIndex.h"
 
 
 UPainterSaveGame* UPainterSaveGame::Create()
 {
-	USaveGame* NewSaveGame= UGameplayStatics::CreateSaveGameObject(StaticClass());
-	return Cast<UPainterSaveGame>(NewSaveGame);
+	UPainterSaveGame* NewSaveGame= Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
+	//Slot name is something random
+	NewSaveGame->SlotName = FGuid::NewGuid().ToString();
+	if(!NewSaveGame->Save()) return nullptr;
+	UPainterSaveGameIndex* Index=UPainterSaveGameIndex::Load();
+	Index->AddSaveGame(NewSaveGame);
+	Index->Save();
+	return NewSaveGame;
 }
 
 bool UPainterSaveGame::Save()
 {
-	return UGameplayStatics::SaveGameToSlot(this, TEXT("Test"), 0);
+	//save game
+	UE_LOG(LogTemp, Warning, TEXT("Painting Index:"));
+
+	for (FString SlotNames : UPainterSaveGameIndex::Load()->GetSlotNames())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Painting names:%s"), *SlotNames);
+	}
+	return UGameplayStatics::SaveGameToSlot(this, SlotName, 0);
 }
 
-UPainterSaveGame* UPainterSaveGame::Load()
+UPainterSaveGame* UPainterSaveGame::Load(FString SlotName)
 {
-	return Cast<UPainterSaveGame>( UGameplayStatics::LoadGameFromSlot(TEXT("Test"),0));
+
+	return Cast<UPainterSaveGame>( UGameplayStatics::LoadGameFromSlot(SlotName,0));
 
 }
 
