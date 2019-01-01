@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PaintingGridCard.h"
+
 #include "PaintingGrid.generated.h"
 
 /**
@@ -23,11 +25,11 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void AddPainting(int32 PaintingIndex);
+	void AddPainting(int32 PaintingIndex,FString PaintingName);
 	
 
 private: 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> GridCardClass;
+	TSubclassOf<UPaintingGridCard> GridCardClass;
 
 };

@@ -28,5 +28,5 @@ private:
 	static const FString SLOT_NAME;
 
 	UPROPERTY()
-		TArray<FString> SlotNames;
+	TArray<FString> SlotNames;
 };
