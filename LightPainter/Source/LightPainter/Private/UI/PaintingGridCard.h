@@ -17,6 +17,16 @@ class UPaintingGridCard : public UUserWidget
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
 		class UTextBlock* SlotName;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
+		class UButton* CardButton;
 public:
-	void SetPaintingName(FString PaintingName);
+	void SetPaintingName(FString NewPaintingName);
+
+	UFUNCTION()
+	void CardButtonClicked();
+	
+private:
+	FString PaintingName;
+
 };
